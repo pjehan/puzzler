@@ -29,7 +29,7 @@ elseif( isset( $_POST['imgScanned'] ) && $_POST['imgScanned'] != '' && $_POST['s
 		
 		<style>
 			body{background-color: #FFF;color: #000;font-size: 14px;}
-			.p{float:left;height: 28px;width: 28px;background-color: #000;border: 1px solid #F00;}
+			.p{float:left;height: 28px;width: 28px;background-color: #000;border: 1px solid #FFF;}
 			.clear {clear:both;}
 			span{margin-left: 40px;color: #000;}
 			.err{color: #F00; font-weight: bold; font-size: 16px;}

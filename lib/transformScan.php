@@ -33,7 +33,6 @@ class transformScan {
 					$html = '';
 					foreach( $tab as $y => $values )
 					{
-						$html .= '<div class="clear"><span>Y : ' . ( ( $y/$this->_split ) +1 ) . '</span>';
 						foreach( $values as $x => $value )
 						{
 							$percent = $colorsRatio/$value;
@@ -65,12 +64,11 @@ class transformScan {
 							elseif( $percent > 0.5 )
 								$style .= 'opacity:0;';
 								
-							$html .= '<div percent="' . $percent . '" value="' . $value . '" val="' . $colorsRatio . '" class="p" style="' . $style . '">' . ( ( $x/$this->_split ) +1 ) . '</div>';
+							$html .= '<div percent="' . $percent . '" value="' . $value . '" val="' . $colorsRatio . '" class="p" style="' . $style . '"></div>';
 						}
 						$html .= '</div>';
-						
-						return $html;
 					}
+					return $html;
     			}
     			else
     				return 'Run Step 1 before step 2 !';
