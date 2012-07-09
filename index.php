@@ -1,121 +1,60 @@
-<html>
+<?php
+$msg 	= '';
+$split 	= '';
+$html 	= '';
+
+if( isset( $_POST['img']) && $_POST['img'] != '' && isset( $_POST['nb'] ) && $_POST['nb'] != '' && is_numeric( $_POST['nb'] ) ) {
+	require_once( 'lib/transformOriginal.php' );
+	$perform 	= new transformOriginal( $_POST['img'], $_POST['nb']);
+	$msg 		= explode( '|', $perform->perform() );
+
+	if( count( $msg ) == 2 ) {
+		$split 	= $msg[0];
+		$msg 	= $msg[1];
+	}
+	else
+		$msg 	= $msg[0];
+}
+elseif( isset( $_POST['imgScanned'] ) && $_POST['imgScanned'] != '' && $_POST['split'] != '' && is_numeric( $_POST['split'] )  ) {
+	require_once( 'lib/transformScan.php' );
+	$perform 	= new transformScan( $_POST['imgScanned'], $_POST['split'] );
+	$html 		= $perform->perform();
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
+		<meta charset="utf-8">
+		<title>Puzzle resolver</title>
+		
 		<style>
-			body{
-				background-color: #FFF;
-				color: #000;
-			}
-			.p{
-				float:left;
-				height: 28px;
-				width: 28px;
-				background-color: #000;
-				border: 1px solid #F00;
-				
-			}
-			
-			.clear {
-				clear:both;
-			}
-			
-			span{
-				margin-left: 40px;
-				color: #000;
-			}
+			body{background-color: #FFF;color: #000;font-size: 14px;}
+			.p{float:left;height: 28px;width: 28px;background-color: #000;border: 1px solid #F00;}
+			.clear {clear:both;}
+			span{margin-left: 40px;color: #000;}
+			.err{color: #F00; font-weight: bold; font-size: 16px;}
 		</style>
 	</head>
 	<body>
-<?php
-	require_once 'data.php';
-	foreach($tab as $y => $values) {
-		foreach($values as $x => $value) {
-			//echo 'Y : '.$y.' - X : '.$x.' - VAL : '.$value.'<br />';
-			
-			
-			list($width, $height) = getimagesize('hautD.png');
-	$img = imagecreatefrompng ('hautD.png');
-	
-	$r = 0;
-	$v = 0;
-	$b = 0;
-	
-	for($y = 0; $y < $height; $y++)
-	{
-		for($x = 0; $x < $width; $x++)
-		{
-			$rgb = imagecolorat($img, $x, $y);
-			$colors = imagecolorsforindex($img, $rgb);
-
-			//echo ' - '.$colors['red'].':'.$colors['green'].':'.$colors['blue'].'<br />';
-			
-			if($colors['alpha'] == 0)
-			{
-				$r += $colors['red'];
-				$v += $colors['green'];
-				$b += $colors['blue'];	
-			}
-		}
-	}
-	
-	//echo $r.' - '.$v.' - '.$b.'<br />';
-	//echo $r+$v+$b;
-	$val = $r+$v+$b;
-
-	$html = '';
-	foreach($tab as $y => $values)
-	{
-		$html .= '<div class="clear"><span>Y : '.(($y/28)+1).'</span>';
-		foreach($values as $x => $value)
-		{
-			$percent = $val/$value;
-			if($percent > 1)
-				$percent = $percent-1;
-			if($percent < 0)
-				$percent = $percent+1;
-				
-			if($percent > 1)
-				$percent = '0';
-			
-			$style = '';
-			if($percent > 0.98) {
-				$style .= 'opacity:1;background-color:#F00;';
-			}
-			elseif($percent > 0.96) {
-				$style .= 'opacity:0.8;background-color:#F00;';
-			}
-			elseif($percent > 0.94) {
-				$style .= 'opacity:0.6;background-color:#F00;';
-			}
-			elseif($percent > 0.92) {
-				$style .= 'opacity:0.4;background-color:#F00;';
-			}
-			elseif($percent > 0.9) {
-				$style .= 'opacity:0.2;background-color:#F00;';
-			}
-			elseif($percent > 0.8) {
-				$style .= 'opacity:0.6;';
-			}
-			elseif($percent > 0.7) {
-				$style .= 'opacity:0.4;';
-			}
-			elseif($percent > 0.6) {
-				$style .= 'opacity:0.2;';
-			}
-			elseif($percent > 0.5) {
-				$style .= 'opacity:0;';
-			}
-				
-			$html .= '<div percent="'.$percent.'" value="'.$value.'" val="'.$val.'" class="p" style="'.$style.'">'.(($x/28)+1).'</div>';
-		}
-		$html .= '</div>';
-	}
-	
-	echo $html;
-	
-		}	
-	}
-	
-	
-?>
+		<?php
+			if( $msg != '' )
+				echo '<p class="err">' . $msg . '</p>';
+		?>
+		<form action="" method="post">
+			<h1>Step 1 - Split original picture</h1>
+			<p><label>Image file</label><input type="text" name="img"></input></p>
+			<p><label>Number of pieces</label><input type="text" name="nb"></input></p>
+			<p><input type="submit" value="Submit"></input></p>
+		</form>
+		
+		<form action="" method="post">
+			<h1>Step 2 - Search scan picture</h1>
+			<p><label>Scanned file</label><input type="text" name="imgScanned"></input></p>
+			<p><label>Split</label><input type="text" name="split" value="<?php echo $split; ?>"></input></p>
+			<p><input type="submit" value="Submit"></input></p>
+		</form>
+		<?php
+			echo $html;
+		?>
 	</body>
 </html>
